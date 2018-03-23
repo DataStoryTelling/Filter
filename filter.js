@@ -45,7 +45,7 @@ function processFilterData(data){
 		var choiceOfMotion_index;
 
 		function printInfo(choiceOfMotion){
-			console.log(choiceOfMotion);
+			//console.log(choiceOfMotion);
 
 			d3.select(".motionInfo").select(".motion-ch").html("Motion Name (Chinese): " + choiceOfMotion["motion-ch"]);
 			d3.select(".motionInfo").select(".motion-en").html("Motion Name (English): " + choiceOfMotion["motion-en"]);
@@ -75,7 +75,21 @@ function processFilterData(data){
 		}
 
 		function printAbsentMember(choiceOfMotion){
-
+			console.log(choiceOfMotion);
+			var members =choiceOfMotion["individual-votes"]["member"];
+			var absents = [];
+			members.forEach(function(d){
+				if (d["vote"][0] === "Absent"){
+					absents.push(d);
+				}
+			});
+			console.log("Absent members"+absents);
+			var tempString = "";
+			absents.forEach(function(d){
+				tempString += d["_name-en"] + ", " + d["_name-ch"] + "&#9;";
+			})
+			d3.select(".motionInfo").select(".absentMember").html("Absent Member: " + tempString)
+															.style("visibility", "visible");
 		}
 		//if there only one vote on the chosen date
 		if (data["legcohk-vote"]['meeting'][choiceOfMeetingDate]['vote'].length === 1) {
