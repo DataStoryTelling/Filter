@@ -1,16 +1,31 @@
 function createFilter(){
 	d3.queue()
 		.defer(d3.json, "term6.json")
+		.defer(d3.csv, "member.csv")
 		.await(ready);
 
-	function ready(error, dataTerm6){
+	function ready(error, dataTerm6, memberData){
 		console.log("Merge data: all votes in legco term 6 so far (up tp March 22th 2018)");
 		console.log(dataTerm6);
 
-		processFilterData(dataTerm6);
+		processFilterData(dataTerm6, memberData);
 	}
 }
-function processFilterData(data){
+function processFilterData(data, memberData){
+	console.log(memberData);
+	//generate memeber name list
+	var demoMemberList = [];
+	var estabMemberList = [];
+	memberData.forEach(function(d, i){
+		if (+d["camp"] === 0){
+			demoMemberList.push(d["_name-en"]);
+		} else if (+d["camp"] === 1){
+			estabMemberList.push(d["_name-en"]);
+		}
+	});
+	console.log(demoMemberList);
+	console.log(estabMemberList);
+
 	var meetingDates = [];
 	var choiceOfMotion;
 	data["legcohk-vote"]['meeting'].forEach(function(d){
@@ -83,7 +98,8 @@ function processFilterData(data){
 					absents.push(d);
 				}
 			});
-			console.log("Absent members"+absents);
+			console.log("Absent members");
+			console.log(absents);
 			var tempString = "";
 			absents.forEach(function(d){
 				tempString += d["_name-en"] + ", " + d["_name-ch"] + "&#9;";
@@ -91,6 +107,24 @@ function processFilterData(data){
 			d3.select(".motionInfo").select(".absentMember").html("Absent Member: " + tempString)
 															.style("visibility", "visible");
 		}
+
+		//calculate votes by camp and consitituency
+		
+		function calGeoVote(choiceOfMotion){
+			var members =choiceOfMotion["individual-votes"]["member"];
+
+			var demoMembers = [];
+			members.forEach(function(d, i){
+				if (d["_constituency"] === "Geographical" && demoMemberList.includes(d["_name-en"])){
+					demoMembers.push(d);
+				}
+			});
+			console.log("demo members in geographical-constituency");
+			console.log(demoMembers);
+			var demoYes, demoNo, demoAbsent, demoPresent, demoAbstain;
+			
+		}
+
 		//if there only one vote on the chosen date
 		if (data["legcohk-vote"]['meeting'][choiceOfMeetingDate]['vote'].length === 1) {
 			choiceOfMotion = data["legcohk-vote"]['meeting'][choiceOfMeetingDate]['vote'][0];
@@ -103,6 +137,7 @@ function processFilterData(data){
 			choiceOfMotion = data["legcohk-vote"]['meeting'][choiceOfMeetingDate]['vote'][choiceOfMotion_index];
 			printInfo(choiceOfMotion);
 			printAbsentMember(choiceOfMotion);
+			calGeoVote(choiceOfMotion);
 		});
 
 
