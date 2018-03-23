@@ -43,10 +43,10 @@ function processFilterData(data){
 			.html(function(d){return d;});
 
 		var choiceOfMotion_index;
-		d3.select("#motions").on("change", function(){
-			choiceOfMotion_index = d3.select(this).property('value');
-			choiceOfMotion = data["legcohk-vote"]['meeting'][choiceOfMeetingDate]['vote'][choiceOfMotion_index];
+
+		function printInfo(choiceOfMotion){
 			console.log(choiceOfMotion);
+
 			d3.select(".motionInfo").select(".motion-ch").html("Motion Name (Chinese): " + choiceOfMotion["motion-ch"]);
 			d3.select(".motionInfo").select(".motion-en").html("Motion Name (English): " + choiceOfMotion["motion-en"]);
 			d3.select(".motionInfo").select(".vote-date").html("Date-Time of Vote: " + choiceOfMotion["vote-date"] + " - " + choiceOfMotion["vote-time"] );
@@ -57,14 +57,40 @@ function processFilterData(data){
 			var temp1 = choiceOfMotion["vote-summary"]["geographical-constituency"];
 			var temp2 = choiceOfMotion["vote-summary"]["functional-constituency"];
 			if (sepFlag === "Yes"){
-				d3.select(".motionInfo").select(".geo-con").html("Geographical Constituency Vote: " + "Obstain: "+ temp1["abstain-count"] + "| Vote Count: " + temp1["vote-count"] + 
-															"| Yes: " + temp1["yes-count"] + "| No: " + temp1["no-count"] + "| Vote Count: " +temp1["vote-count"]+ "| Present Count: " + temp1["present-count"]);
-				d3.select(".motionInfo").select(".func-con").html("Functional Constituency Vote: " + "Obstain: "+ temp2["abstain-count"] + "| Vote Count: " + temp2["vote-count"] + 
-															"| Yes: " + temp2["yes-count"] + "| No: " + temp2["no-count"] + "| Vote Count: " +temp2["vote-count"]+ "| Present Count: " + temp2["present-count"]);
+				d3.select(".motionInfo").select(".geo-con").html("Geographical Constituency Vote: " + "Obstain: "+ temp1["abstain-count"] + " | Vote Count: " + temp1["vote-count"] + 
+															" | Yes: " + temp1["yes-count"] + " | No: " + temp1["no-count"] + " | Vote Count: " +temp1["vote-count"]+ " | Present Count: " + temp1["present-count"])
+															.style("visibility", "visible");
+				d3.select(".motionInfo").select(".func-con").html("Functional Constituency Vote: " + "Obstain: "+ temp2["abstain-count"] + " | Vote Count: " + temp2["vote-count"] + 
+															" | Yes: " + temp2["yes-count"] + " | No: " + temp2["no-count"] + " | Vote Count: " +temp2["vote-count"]+ " | Present Count: " + temp2["present-count"])
+															.style("visibility", "visible");
+				d3.select(".motionInfo").select(".all-con").html("");
 			} else{
 				var temp = choiceOfMotion["vote-summary"]["overall"];
-				d3.select(".motionInfo").select(".all-con").html("");
+				d3.select(".motionInfo").select(".all-con").html("Vote: " + "Obstain: "+ temp["abstain-count"] + " | Vote Count: " + temp["vote-count"] + 
+															" | Yes: " + temp["yes-count"] + " | No: " + temp["no-count"] + " | Vote Count: " +temp["vote-count"]+ " | Present Count: " + temp["present-count"])
+															.style("visibility", "visible");
+				d3.select(".motionInfo").select(".geo-con").html("");
+				d3.select(".motionInfo").select(".func-con").html("");
 			}
+		}
+
+		function printAbsentMember(choiceOfMotion){
+
+		}
+		//if there only one vote on the chosen date
+		if (data["legcohk-vote"]['meeting'][choiceOfMeetingDate]['vote'].length === 1) {
+			choiceOfMotion = data["legcohk-vote"]['meeting'][choiceOfMeetingDate]['vote'][0];
+			printInfo(choiceOfMotion);
+			printAbsentMember(choiceOfMotion);
+		}
+		//else select motion
+		d3.select("#motions").on("change", function(){
+			choiceOfMotion_index = d3.select(this).property('value');
+			choiceOfMotion = data["legcohk-vote"]['meeting'][choiceOfMeetingDate]['vote'][choiceOfMotion_index];
+			printInfo(choiceOfMotion);
+			printAbsentMember(choiceOfMotion);
 		});
+
+
 	});	
 }
