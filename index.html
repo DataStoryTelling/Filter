@@ -1,7 +1,14 @@
 <html>
 	<head>
+		<meta charset="utf-8">
 		<script src="https://d3js.org/d3.v4.min.js"></script>
-		<script type="text/javascript" src="filter.js"></script>>
+		<script type="text/javascript" src="filter.js"></script>
+		<style type="text/css">
+			table th, td {
+    			border: 1px solid black;
+  				border-spacing: 20px;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -17,16 +24,70 @@
 			<p class="voteSepMech">Vote Seperate Mechanism: </p>
 			<p class="vote-result">Result: </p>
 			<p class="all-con" style="visibility:hidden">Vote: </p>
-			
-			<p class="geo-con" style="visibility:hidden">Geographical Constituency Vote: </p>
-			<p class="geo-con-demo" style="visibility:hidden">Pan-democratic Camp: </p>
-			<p class="geo-con-estab" style="visibility:hidden">Pro-establishment Camp: </p>
-			
+
+			<p class="geo-con" style="visibility:hidden">Geographical Constituency Vote: </p>			
 			<p class="func-con" style="visibility:hidden">Functional Constituency Vote: </p>
-			<p class="func-con-demo" style="visibility:hidden">Pan-democratic Camp: </p>
-			<p class="func-con-estab" style="visibility:hidden">Pro-establishment Camp: </p>
+			<table class="details">
+				<tr>
+					<td>Constituency:</td>
+					<th colspan="5">Geographical Constituency</th>
+					<th colspan="5">Functional Constituency</th>
+				</tr>
+				<tr>
+					<td>Vote: </td>
+					<td>Yes</td>
+					<td>No</td>
+					<td>Absent</td>
+					<td>Abstain</td>
+					<td>Present</td>
+					<td>Yes</td>
+					<td>No</td>
+					<td>Absent</td>
+					<td>Abstain</td>
+					<td>Present</td>
+				</tr>
+					
+				<tr>
+					<td>Pan-democratic Camp: </td>
+					<div class="Geographical">
+						<td class="yes"></td>
+						<td class="no"></td>
+						<td class="absent"></td>
+						<td class="abstain"></td>
+						<td class="present"></td>
+					</div>
+					<div class="Functional">
+						<td class="demo-yes-func"></td>
+						<td class="demo-no-func"></td>
+						<td class="demo-absent-func"></td>
+						<td class="demo-abstain-func"></td>
+						<td class="demo-present-func"></td>
+					</div>
+					
+				</tr>
+
+				<tr>
+					<td>Pro-establishment Camp: </td>
+					<div class="Geographical">
+						<td class="es-yes"></td>
+						<td class="es-no"></td>
+						<td class="es-absent"></td>
+						<td class="es-abstain"></td>
+						<td class="es-present"></td>
+					</div>
+					<div class="Functional">
+						<td class="es-yes-func"></td>
+						<td class="es-no-func"></td>
+						<td class="es-absent-func"></td>
+						<td class="es-abstain-func"></td>
+						<td class="es-present-func"></td>
+					</div>
+				</tr>
+			</table>
 			</br>
 			<p class="absentMember" style="visibility:hidden">Absent Member: </p>
+
+			<p style="color:grey">The votes counting by camps above excludes functional constituency member Dr Pierre CHAN，陳沛然, who claims himself is in neither.</p>
 		</div>
 		<script type="text/javascript">
 			createFilter();

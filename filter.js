@@ -68,7 +68,7 @@ function processFilterData(data, memberData){
 			d3.select(".motionInfo").select(".vote-result").html("Result: "+choiceOfMotion["vote-summary"]["overall"]["result"]);
 			d3.select(".motionInfo").select(".mover").html("Motion mover: " + choiceOfMotion["mover-en"] + ", " + choiceOfMotion["mover-ch"]);
 			var sepFlag = choiceOfMotion["vote-separate-mechanism"];
-			d3.select(".motionInfo").select(".voteSepMech").html("Vote Seperate Mechanism: " + sepFlag);
+			d3.select(".motionInfo").select(".voteSepMech").html("Vote Separate Mechanism: " + sepFlag);
 			var temp1 = choiceOfMotion["vote-summary"]["geographical-constituency"];
 			var temp2 = choiceOfMotion["vote-summary"]["functional-constituency"];
 			if (sepFlag === "Yes"){
@@ -79,6 +79,8 @@ function processFilterData(data, memberData){
 															" | Yes: " + temp2["yes-count"] + " | No: " + temp2["no-count"] + " | Vote Count: " +temp2["vote-count"]+ " | Present Count: " + temp2["present-count"])
 															.style("visibility", "visible");
 				d3.select(".motionInfo").select(".all-con").html("");
+
+				d3.select(".detail").style("visibility", "visible");
 			} else{
 				var temp = choiceOfMotion["vote-summary"]["overall"];
 				d3.select(".motionInfo").select(".all-con").html("Vote: " + "Obstain: "+ temp["abstain-count"] + " | Vote Count: " + temp["vote-count"] + 
@@ -86,6 +88,8 @@ function processFilterData(data, memberData){
 															.style("visibility", "visible");
 				d3.select(".motionInfo").select(".geo-con").html("");
 				d3.select(".motionInfo").select(".func-con").html("");
+
+				d3.select(".detail").style("visibility", "hidden");
 			}
 		}
 
@@ -110,19 +114,122 @@ function processFilterData(data, memberData){
 
 		//calculate votes by camp and consitituency
 		
-		function calGeoVote(choiceOfMotion){
+		function calGeoConVote(choiceOfMotion, con){
 			var members =choiceOfMotion["individual-votes"]["member"];
 
 			var demoMembers = [];
 			members.forEach(function(d, i){
-				if (d["_constituency"] === "Geographical" && demoMemberList.includes(d["_name-en"])){
+				if (d["_constituency"] === con && demoMemberList.includes(d["_name-en"])){
 					demoMembers.push(d);
 				}
 			});
-			console.log("demo members in geographical-constituency");
+			console.log("demo members in "+con+"-constituency");
 			console.log(demoMembers);
-			var demoYes, demoNo, demoAbsent, demoPresent, demoAbstain;
+			var voteTemp;
+			var demoYes = demoNo = demoAbsent = demoPresent = demoAbstain = 0;
+
+			demoMembers.forEach(function(d, i){
+				voteTemp = d["vote"][0];
+				if (voteTemp === "Yes"){demoYes ++;}
+				else if (voteTemp === "Absent"){demoAbsent++;}
+				else if (voteTemp === "Present"){demoPresent++;}
+				else if (voteTemp === "Abstain"){demoAbstain++;}
+				else if (voteTemp === "No"){demoNo++;}
+				else {console.log("vote count error!")}
+			});
 			
+			d3.select(".details").select(".yes").html(demoYes);
+			d3.select(".details").select(".no").html(demoNo);
+			d3.select(".details").select(".abstain").html(demoAbstain);
+			d3.select(".details").select(".absent").html(demoAbsent);
+			d3.select(".details").select(".present").html(demoPresent);
+			
+			//establiment camp in geographical constituency
+			var esMembers = [];
+			members.forEach(function(d, i){
+				if (d["_constituency"] === con && estabMemberList.includes(d["_name-en"])){
+					esMembers.push(d);
+				}
+			});
+			console.log("establiment members in "+con+"-constituency");
+			console.log(esMembers);
+			
+			var esYes = esNo = esAbsent = esPresent = esAbstain = 0;
+
+			esMembers.forEach(function(d, i){
+				voteTemp = d["vote"][0];
+				if (voteTemp === "Yes"){esYes ++;}
+				else if (voteTemp === "Absent"){esAbsent++;}
+				else if (voteTemp === "Present"){esPresent++;}
+				else if (voteTemp === "Abstain"){esAbstain++;}
+				else if (voteTemp === "No"){esNo++;}
+				else {console.log("vote count error!")}
+			});
+			
+			d3.select(".details").select(".es-yes").html(esYes);
+			d3.select(".details").select(".es-no").html(esNo);
+			d3.select(".details").select(".es-abstain").html(esAbstain);
+			d3.select(".details").select(".es-absent").html(esAbsent);
+			d3.select(".details").select(".es-present").html(esPresent);
+		}
+
+		function calFuncConVote(choiceOfMotion, con){
+			var members =choiceOfMotion["individual-votes"]["member"];
+
+			var demoMembers = [];
+			members.forEach(function(d, i){
+				if (d["_constituency"] === con && demoMemberList.includes(d["_name-en"])){
+					demoMembers.push(d);
+				}
+			});
+			console.log("demo members in "+con+"-constituency");
+			console.log(demoMembers);
+			var voteTemp;
+			var demoYes = demoNo = demoAbsent = demoPresent = demoAbstain = 0;
+
+			demoMembers.forEach(function(d, i){
+				voteTemp = d["vote"][0];
+				if (voteTemp === "Yes"){demoYes ++;}
+				else if (voteTemp === "Absent"){demoAbsent++;}
+				else if (voteTemp === "Present"){demoPresent++;}
+				else if (voteTemp === "Abstain"){demoAbstain++;}
+				else if (voteTemp === "No"){demoNo++;}
+				else {console.log("vote count error!")}
+			});
+			
+			d3.select(".details").select(".demo-yes-func").html(demoYes);
+			d3.select(".details").select(".demo-no-func").html(demoNo);
+			d3.select(".details").select(".demo-abstain-func").html(demoAbstain);
+			d3.select(".details").select(".demo-absent-func").html(demoAbsent);
+			d3.select(".details").select(".demo-present-func").html(demoPresent);
+			
+			//establiment camp in geographical constituency
+			var esMembers = [];
+			members.forEach(function(d, i){
+				if (d["_constituency"] === con && estabMemberList.includes(d["_name-en"])){
+					esMembers.push(d);
+				}
+			});
+			console.log("establiment members in "+con+"-constituency");
+			console.log(esMembers);
+			
+			var esYes = esNo = esAbsent = esPresent = esAbstain = 0;
+
+			esMembers.forEach(function(d, i){
+				voteTemp = d["vote"][0];
+				if (voteTemp === "Yes"){esYes ++;}
+				else if (voteTemp === "Absent"){esAbsent++;}
+				else if (voteTemp === "Present"){esPresent++;}
+				else if (voteTemp === "Abstain"){esAbstain++;}
+				else if (voteTemp === "No"){esNo++;}
+				else {console.log("vote count error!")}
+			});
+			
+			d3.select(".details").select(".es-yes-func").html(esYes);
+			d3.select(".details").select(".es-no-func").html(esNo);
+			d3.select(".details").select(".es-abstain-func").html(esAbstain);
+			d3.select(".details").select(".es-absent-func").html(esAbsent);
+			d3.select(".details").select(".es-present-func").html(esPresent);
 		}
 
 		//if there only one vote on the chosen date
@@ -137,7 +244,8 @@ function processFilterData(data, memberData){
 			choiceOfMotion = data["legcohk-vote"]['meeting'][choiceOfMeetingDate]['vote'][choiceOfMotion_index];
 			printInfo(choiceOfMotion);
 			printAbsentMember(choiceOfMotion);
-			calGeoVote(choiceOfMotion);
+			calGeoConVote(choiceOfMotion, "Geographical");
+			calFuncConVote(choiceOfMotion, "Functional");
 		});
 
 
